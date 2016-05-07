@@ -1,6 +1,6 @@
 ---
 title: "MATH 216 Homework 5"
-author: "WRITE YOUR NAME HERE"
+author: "Ali Cook"
 output: html_document
 ---
 
@@ -9,10 +9,10 @@ output: html_document
 
 Please indicate
 
-* Who you collaborated with:
-* Roughly how much time you spent on this HW:
-* What gave you the most trouble:
-* Any comments you have: 
+* Who you collaborated with:Jacob Dixon
+* Roughly how much time you spent on this HW:8 hours
+* What gave you the most trouble:Figuring out how to make a shiny app! I had to do the online tutorials several times, and really dig down to understand everything. I didn't feel that we spent enough time in class on this. 
+* Any comments you have: Some additional code was adapted from http://shiny.rstudio.com/gallery/word-cloud.html--mostly the additional features like the update button and word count slider. Also, I tried to install packages in my shiny server several times and I just can't get it to recognize wordclouds as a function...gah!
 
 
 
@@ -28,7 +28,7 @@ a "single-file" Shiny app based on file `App.R`
 * Install all necessary packages on your Middlebury Shiny server account
 following the instructions given in Lec16 Shiny.
 * Upload your app to the Middlebury Shiny server and replace the NHL link with
-the link for your app [here](https://www.nhl.com/), so that when you Knit the 
+the link for your app [here](http://shiny.middlebury.edu/acook/book/), so that when you Knit the 
 document a working hyperlink shows.
 
 Hints:
@@ -41,14 +41,61 @@ people spinning their wheels on this HW this late in the semester.
 wordcloud for. Note this isn't the only way to do this. Ex:
 
 ```{r}
-text <- "blah2"
-if(text == "blah1"){
-  value <- 1
-} else if (text == "blah2"){
-  value <- 2
-} else if (text == "blah3"){
-  value <- 3
-}
-value
+library(dplyr)
+library(stringr)
+library(tm)
+library(wordcloud)
+library(SnowballC)
+library(shiny)
+
+
+
+frank <-
+  readLines("Frankenstein.txt", encoding="UTF-8") %>%
+  as.character()
+
+jungle <-
+  readLines("The Jungle.txt", encoding="UTF-8") %>%
+  as.character()
+
+walden <-
+  readLines("Walden.txt", encoding="UTF-8") %>%
+  as.character()
+
+
+#clean each
+
+frank <- frank %>%
+  tolower() %>%
+  removeNumbers() %>%
+  removePunctuation() %>%
+  removeWords(stopwords("english")) %>%
+  stemDocument() %>%
+  stripWhitespace()
+
+jungle <- jungle %>%
+  tolower() %>%
+  removeNumbers() %>%
+  removePunctuation() %>%
+  removeWords(stopwords("english")) %>%
+  stemDocument() %>%
+  stripWhitespace()
+
+walden <- walden %>%
+  tolower() %>%
+  removeNumbers() %>%
+  removePunctuation() %>%
+  removeWords(stopwords("english")) %>%
+  stemDocument() %>%
+  stripWhitespace()
+
+#word clouds
+
+frank <- VectorSource(frank) %>% Corpus()
+
+jungle <- VectorSource(jungle) %>% Corpus()
+
+walden <- VectorSource(walden) %>% Corpus()
+
 ```
 
